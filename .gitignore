@@ -1,0 +1,28 @@
+# Locally fetched dependencies and user-supplied model artifacts.
+/external/*
+/models/*
+
+# Build products, generated C bindings, and Zig caches.
+/build/*
+/zig-out/
+/.zig-cache/
+
+# Runtime evidence is generated locally; concise reviewed findings live in docs/.
+/results/
+*.dll
+*.lib
+*.exp
+*.pdb
+*.obj
+*.exe
+*.log
+__pycache__/
+*.pyc
+
+# Local toolchain and editor state.
+/.tools/
+/.vscode/
+.DS_Store
+Thumbs.db
+/temp/
+/release/

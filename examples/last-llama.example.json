@@ -1,0 +1,27 @@
+{
+  "default_model": "smol",
+  "backend": "auto",
+  "generation": {
+    "max_tokens": 32,
+    "temperature": 0,
+    "top_p": 1,
+    "seed": 1,
+    "context_size": 512,
+    "timeout_ms": 10000
+  },
+  "models": {
+    "smol": {
+      "path": "models\\smollm2-360m-instruct-q8_0.gguf",
+      "description": "Small local smoke-test model"
+    },
+    "qwen": {
+      "path": "models\\Qwen3-32B-Q4_K_M.gguf",
+      "backend": "cuda",
+      "gpu_layers": 33,
+      "generation": {
+        "temperature": 0.6,
+        "max_tokens": 512
+      }
+    }
+  }
+}

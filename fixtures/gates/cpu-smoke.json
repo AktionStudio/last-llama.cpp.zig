@@ -1,0 +1,10 @@
+[
+  {
+    "id": "cpu-smoke",
+    "prompt": "Reply with one short greeting.",
+    "context_size": 256,
+    "max_tokens": 32,
+    "timeout_ms": 60000,
+    "backend": "cpu"
+  }
+]

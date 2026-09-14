@@ -1,0 +1,38 @@
+{
+  "default_model": "smol",
+  "backend": "cpu",
+  "workers": {
+    "cpu": {
+      "path": "..\\zig-out\\bin\\last-llama-cpu.exe",
+      "library_dirs": [
+        "..\\build\\schema\\cpu",
+        "..\\build\\engine\\cpu\\bin"
+      ]
+    },
+    "cuda": {
+      "path": "..\\zig-out\\bin\\last-llama-cuda.exe",
+      "library_dirs": [
+        "..\\.tools\\cuda-13.3.1\\bin\\x64",
+        "..\\build\\schema\\cuda",
+        "..\\build\\engine\\cuda\\bin"
+      ]
+    }
+  },
+  "models": {
+    "smol": {
+      "path": "..\\models\\smollm2-360m-instruct-q8_0.gguf"
+    },
+    "qwen": {
+      "path": "..\\models\\qwen3-8b-q4_k_m.gguf",
+      "backend": "cuda",
+      "gpu_layers": 37,
+      "description": "Local Qwen3 8B acceptance model",
+      "generation": {
+        "max_tokens": 128,
+        "temperature": 0,
+        "context_size": 512,
+        "timeout_ms": 60000
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.{
+    .name = .last_llama_cpp_zig,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.17.0-dev.1676+c9dc9b798",
+    .fingerprint = 0x4d78b89df1a2f743,
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "tests",
+        "examples",
+        "scripts",
+        "fixtures",
+        "docs",
+        "LICENSE",
+        "NOTICE",
+        "DEPENDENCIES.md",
+        "EXTRACTION_MANIFEST.md",
+    },
+}

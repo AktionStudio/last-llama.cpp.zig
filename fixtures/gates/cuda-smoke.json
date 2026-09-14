@@ -1,0 +1,11 @@
+[
+  {
+    "id": "cuda-smoke",
+    "prompt": "Reply with one short greeting.",
+    "context_size": 256,
+    "max_tokens": 32,
+    "timeout_ms": 60000,
+    "backend": "cuda",
+    "gpu_layers": 1
+  }
+]

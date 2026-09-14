@@ -1,0 +1,40 @@
+{
+  "release_boundary": "release-allowlist-v1",
+  "path": "repository root",
+  "allowlist": [
+    "README.md",
+    "LICENSE",
+    "LICENSES",
+    "NOTICE",
+    "DEPENDENCIES.md",
+    "EXTRACTION_MANIFEST.md",
+    "build.zig",
+    "build.zig.zon",
+    ".gitignore",
+    "src/",
+    "tests/",
+    "fixtures/",
+    "examples/",
+    "scripts/",
+    "docs/ (excluding historical baseline and migration-only material)",
+    "docs/owned-interface/PROVENANCE.md"
+  ],
+  "omit": [
+    "external/",
+    "models/",
+    "build/",
+    ".tools/",
+    ".zig-cache/",
+    "results/",
+    "evidence/",
+    "temp/",
+    "release/",
+    "docs/owned-interface/baseline/",
+    "docs/owned-interface/README.md",
+    "docs/owned-interface/REQUIREMENTS.md",
+    "docs/owned-interface/capture-supplemental.py",
+    "scripts/qualify-build-host.ps1",
+    "scripts/verify-frozen-parity.py",
+    "scripts/verify-token-pieces.py"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "generator": "NMake",
+  "jobs": {
+    "cpu": 16,
+    "cuda": 16
+  }
+}

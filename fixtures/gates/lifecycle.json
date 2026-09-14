@@ -1,0 +1,50 @@
+[
+  {
+    "id": "structured-final",
+    "prompt": "Return exactly the JSON object {\"answer\":\"blue\"}.",
+    "context_size": 256,
+    "max_tokens": 64,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "expect_json": true,
+    "schema_json": "{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"const\":\"blue\"}},\"required\":[\"answer\"],\"additionalProperties\":false}"
+  },
+  {
+    "id": "cancelled-before-decode",
+    "prompt": "Reply briefly.",
+    "context_size": 256,
+    "max_tokens": 32,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "cancel_after_decodes": 0
+  },
+  {
+    "id": "injected-failure",
+    "prompt": "Reply briefly.",
+    "context_size": 256,
+    "max_tokens": 32,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "fail_after_decodes": 0
+  },
+  {
+    "id": "grammar-accepted",
+    "prompt": "unused",
+    "context_size": 256,
+    "max_tokens": 1,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "grammar": "root ::= \"blue\"",
+    "grammar_candidate": "blue"
+  },
+  {
+    "id": "grammar-rejected",
+    "prompt": "unused",
+    "context_size": 256,
+    "max_tokens": 1,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "grammar": "root ::= \"blue\"",
+    "grammar_candidate": "red"
+  }
+]

@@ -1,0 +1,10 @@
+The pre-owned interface was historically adapted from Deins/llama.cpp.zig at
+f776b9aca51cc90f7ddba9c2a0874862aebf08f5. Its MIT license is retained in
+LICENSES/Deins-llama.cpp.zig-MIT.txt; the historical implementation remains
+outside this curated repository. Active src/llama code is a bounded
+project-owned implementation using the upstream C API.
+
+The native engine is an external dependency obtained from ggml-org/llama.cpp at
+d4abd573f6a360201799072384ceec6170fdb60c. Its MIT license is retained in
+LICENSES/llama.cpp-MIT.txt. No llama.cpp source or generated engine artifact is
+tracked in this repository.

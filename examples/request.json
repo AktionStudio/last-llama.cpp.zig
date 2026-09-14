@@ -1,0 +1,12 @@
+[
+  {
+    "id": "example",
+    "prompt": "Return exactly the JSON object {\"answer\":\"blue\"}.",
+    "context_size": 256,
+    "max_tokens": 64,
+    "timeout_ms": 60000,
+    "backend": "cpu",
+    "expect_json": true,
+    "schema_json": "{\"type\":\"object\",\"properties\":{\"answer\":{\"type\":\"string\",\"const\":\"blue\"}},\"required\":[\"answer\"],\"additionalProperties\":false}"
+  }
+]
