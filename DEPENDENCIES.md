@@ -1,6 +1,6 @@
 # Dependencies
 
-The first clean reproduction is deliberately pinned to the lab treatment. Do not upgrade these dependencies as part of extraction.
+These versions define the recorded build treatment. Start with [Build from source](docs/BUILDING.md) for the command sequence. Dependency upgrades require fresh validation; the recorded host below is evidence, not a general hardware support matrix.
 
 | Component | Required treatment | Acquisition |
 | --- | --- | --- |

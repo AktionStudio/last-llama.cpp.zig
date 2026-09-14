@@ -1,5 +1,7 @@
 # Standalone runtime boundary
 
+For implemented capabilities and complete calling examples, start with the [application integration guide](INTEGRATION.md). This reference describes the worker contract; its lifecycle names are not separate CLI subcommands.
+
 The API boundary is `last-llama-jsonl-v1`, implemented by
 `last-llama-cpu.exe` and `last-llama-cuda.exe`. Embedding applications remain
 outside this repository and must qualify their own adapter and execution

@@ -1,6 +1,8 @@
 # Locally fetched dependencies and user-supplied model artifacts.
 /external/*
 /models/*
+!/models/README.md
+/last-llama.json
 
 # Build products, generated C bindings, and Zig caches.
 /build/*

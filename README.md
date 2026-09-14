@@ -1,117 +1,116 @@
 # Last-llama.cpp.zig
 
-`Last-llama.cpp.zig` is a standalone Zig-facing integration for a pinned `llama.cpp` runtime. Its Windows treatment builds explicit CPU and CUDA runners, loads an explicitly supplied GGUF, applies a model chat template, supports guarded JSON Schema-to-GBNF or direct GBNF constraints, and emits one JSON result per request. The additive `last-llama-jsonl-v1` attestation reports runtime/module, model, template/treatment, backend/device, and requested/effective offload identity.
+Run a GGUF language model locally on Windows. You can start with the command-line
+tool, then use the same CPU or CUDA runtime from your own application when you
+are ready.
 
-Active `src/llama/` is a bounded project-owned interface over the pinned
-upstream C API. Historical attribution and licenses remain in
-[NOTICE](NOTICE), [LICENSES](LICENSES), and
-[EXTRACTION_MANIFEST.md](EXTRACTION_MANIFEST.md).
+Models are supplied separately, and this project never downloads one without
+you choosing it.
 
-Owned-interface migration is complete. All active Deins-derived implementation
-has been removed and replaced with an independently implemented minimal Zig
-interface to upstream llama.cpp. CPU and CUDA parity, lifecycle/cleanup,
-schema/contract behavior, attestation, artifact provenance, and exact
-token/piece replay have passed with no observed runtime regression. This is a
-standalone-runtime statement; downstream consumers retain their own
-execution-bound qualification records.
+| I want to... | Start here |
+| --- | --- |
+| Try my first prompt | [Try it](#try-it) |
+| Use the runtime from an application | [Application guide](docs/INTEGRATION.md) |
+| Compile the project myself | [Build from source](docs/BUILDING.md) |
 
-**Release qualification note:** runtime/package qualification and
-development-repository isolation were verified as separate evidence sets.
-Combined runtime execution plus real development-Git isolation in one
-environment remains unqualified for v0.1.0.
+## Try it
 
-It is not llama.cpp, a model distribution, an inference server, or Ollama. It
-contains only the standalone runtime, schema bridge, and reference CLI.
+The Windows package is the easiest way to begin. You need Windows x64 and a GGUF
+model. The native workers also use the Microsoft Visual C++/OpenMP runtime,
+which is already installed on many Windows PCs. The `doctor` command below will
+check your setup. If the Microsoft runtime is missing, use the official
+[Visual C++ x64 Redistributable](https://aka.ms/vc14/vc_redist.x64.exe).
 
-## Quick start
+CUDA is optional. It needs a supported NVIDIA GPU and a suitable display driver,
+available from the official [NVIDIA driver page](https://www.nvidia.com/drivers).
+You do not need Zig, CMake, or the CUDA Toolkit to use the package.
 
-Use PowerShell. Models are always explicit inputs; setup never downloads one.
-
-```powershell
-./scripts/setup-dependencies.ps1
-
-./scripts/generate-bindings.ps1 `
-  -ZigHeader C:\path\to\zig-0.14.1\zig.exe
-
-./scripts/build-engine.ps1 -Backend cpu
-./scripts/build-schema-api.ps1 -Backend cpu
-
-./scripts/run-gate.ps1 `
-  -Backend cpu `
-  -Case smoke `
-  -Model C:\path\to\smollm2-360m-instruct-q8_0.gguf `
-  -Zig C:\path\to\zig-0.17.0-dev.1676+c9dc9b798\zig.exe
-```
-
-The normal dependency-free check is:
+1. Download the Windows x64 binary ZIP from the [releases page](https://github.com/AktionStudio/last-llama.cpp.zig/releases).
+2. Extract the complete ZIP to a directory of your choice.
+3. Choose a GGUF model using the [model guide](models/README.md).
+4. Open PowerShell in the extracted directory and replace the example model path below with yours.
 
 ```powershell
-zig build test
+.\last-llama.exe doctor
+.\last-llama.exe run "C:\models\your-model.gguf" --backend cpu --prompt "Say hello in one sentence." --max-tokens 128 --context-size 4096 --timeout-ms 300000
 ```
 
-The native runner builds with explicit backend selection:
+If the CPU checks pass, you are ready to run on CPU. CUDA diagnostics do not
+prevent CPU use when the CPU worker is healthy. A successful `run` prints the
+model's answer directly in the terminal.
+
+The example above uses a model path, so you do not need to create a configuration
+file before trying your first prompt. If something does not work, the
+[CLI troubleshooting guide](docs/CLI.md#troubleshooting) explains the common
+messages and what to check next.
+
+### Make everyday commands shorter
+
+Once your first prompt works, you can give models friendly names such as
+`qwen3-8b`. Save the [configuration example](last-llama.json.example) beside
+`last-llama.exe` as `last-llama.json`, then edit the model path.
+
+The current v0.1.0 ZIP does not include this example file, but the direct model
+path shown above works without it.
 
 ```powershell
-zig build -Dbackend=cpu -Druntime-revision=<this-repository-commit>
-zig build -Dbackend=cuda -Druntime-revision=<this-repository-commit>
+Copy-Item .\last-llama.json.example .\last-llama.json
+notepad .\last-llama.json
+.\last-llama.exe models show qwen3-8b
+.\last-llama.exe run qwen3-8b --prompt "Explain black holes simply."
 ```
 
-Those build commands require the generated binding, selected CMake engine, and guarded schema bridge described in [docs/REPRODUCTION.md](docs/REPRODUCTION.md). `run-gate.ps1` supplies those paths and adds only the selected engine directories to its child process `PATH`.
+Relative model paths are resolved from the directory containing the configuration
+file. See the [CLI guide](docs/CLI.md) for all settings and Command Prompt
+examples.
 
-Direct `zig build` defaults to the tracked NMake engine and schema directories. When linking a Ninja build directly, pass both `-Dengine-dir=build/engine/<backend>/ninja` and `-Dschema-lib=build/schema/<backend>/ninja/last-llama-schema.lib`; `run-gate.ps1 -Generator Ninja` supplies them automatically.
+If you want to use CUDA, choose a positive offload count that is appropriate for
+your model. The [backend selection guide](docs/CLI.md#defaults-and-backend-selection)
+explains CUDA, CPU, and the conservative `auto` behavior.
 
-The tracked build default is NMake, which remains the supported reference path.
-`scripts/build-engine.ps1 -Generator Ninja -Jobs <N>` is the explicit parallel
-path; both generators use the same pinned llama.cpp source, MSVC, CMake options,
-and backend settings. Release v0.1.0 uses fresh Ninja builds at 16 jobs. See
-[docs/REPRODUCTION.md](docs/REPRODUCTION.md).
+## Use it in your application
 
-Historical migration checks are summarized in
-[docs/CLI_PACKAGE_QUALIFICATION.md](docs/CLI_PACKAGE_QUALIFICATION.md) and
-[docs/HISTORICAL_EVIDENCE.md](docs/HISTORICAL_EVIDENCE.md). They are not release
-qualification. The exact unsigned v0.1.0 source and extracted distribution are
-qualified afresh by the release procedure.
+The simplest integration is to call `last-llama.exe` with `--json`. Applications
+that need the full request contract can launch a CPU or CUDA worker directly.
+Both routes use the same local inference runtime.
 
-`last-llama-{cpu,cuda}.exe --inspect-runtime` returns machine-readable runtime,
-loaded-module, backend, and device identity without loading a model. With a model
-path as its only argument, the runner reads one JSON request from stdin. See
-[docs/RUNTIME_BOUNDARY.md](docs/RUNTIME_BOUNDARY.md) for the request, attestation,
-one-shot lifecycle, and Qwen treatment contract.
+You can:
 
-## Human-facing reference CLI
+- Generate text from a local GGUF model using CPU or NVIDIA CUDA.
+- Control sampling, context size, token limits, and generation timeouts.
+- Request structured JSON with the supported JSON Schema guard.
+- Receive machine-readable runtime, model, template, and backend information.
+- Inspect the runtime without loading a model.
 
-The dependency-free `last-llama.exe` target is a convenience client over those
-unchanged worker processes:
+The [application guide](docs/INTEGRATION.md) includes complete Python examples
+for the CLI and direct workers. The [runtime reference](docs/RUNTIME_BOUNDARY.md)
+documents the full request and response contract.
 
-```powershell
-.\.tools\zig\zig.exe build cli
-last-llama run qwen --prompt "Explain black holes simply."
-```
+This is a one-shot local runtime rather than an inference server: applications
+manage conversation history, scheduling, and orchestration themselves.
 
-It provides strict local JSON configuration, model aliases, conservative
-CPU/CUDA selection, worker inspection, diagnostics, human-readable generation
-output, and faithful `--json` output. It does not link to llama.cpp or add
-conversation state. See [docs/CLI.md](docs/CLI.md) and
-[examples/last-llama.example.json](examples/last-llama.example.json).
+## Build from source
 
-## Initial scope and model fixtures
+Prefer to compile it yourself? The [source-build guide](docs/BUILDING.md) walks
+through the required tools, a CLI-only build, a complete CPU build, CUDA, and
+the available validation gates.
 
-The tracked compact gates use the available SmolLM2 infrastructure fixture only:
+## More information
 
-- `smollm2-360m-instruct-q8_0.gguf`
-- SHA-256 `48ab3034d0dd401fbc721eb1df3217902fee7dab9078992d66431f09b7750201`
+This README is focused on getting started. Detailed engineering, release, and
+evidence material lives in the dedicated references below.
 
-The former Qwen treatment is documented but its model is not present in the frozen lab at extraction time:
+| Reference | What it covers |
+| --- | --- |
+| [Models](models/README.md) | Model sources, configuration, memory considerations, and recorded evidence. |
+| [CLI guide](docs/CLI.md) | Commands, settings, package layout, and troubleshooting. |
+| [Runtime reference](docs/RUNTIME_BOUNDARY.md) | Worker protocol, lifecycle, constraints, and attestation. |
+| [Dependencies](DEPENDENCIES.md) | Pinned source and build toolchains. |
+| [Reproduction gates](docs/REPRODUCTION.md) | Smoke, structured-output, and lifecycle checks. |
+| [Package evidence](docs/CLI_PACKAGE_QUALIFICATION.md) | Recorded package results and their limits. |
+| [Release procedure](docs/RELEASE.md) | Packaging, signing status, and release qualification. |
+| [Licenses and attribution](NOTICE) | Project and third-party notices. |
 
-- `Qwen3-32B-Q4_K_M.gguf`
-- recorded SHA-256 `efd971561896866f0e910cce52761ca77b1b138090c7f15fe284676d57d1f689`
-- recorded embedded-template SHA-256 `57f1fd00f0013a2be96aa79b857391f27e23df5b5f847072b524c897e24d0361`
-
-Do not infer Qwen reproduction from a CPU or CUDA smoke using the small model. See [docs/HISTORICAL_EVIDENCE.md](docs/HISTORICAL_EVIDENCE.md) for the preserved lab evidence and its limits.
-
-## Unsigned v0.1.0 release
-
-The v0.1.0 binary distribution is deliberately unsigned. Signing any executable
-or DLL changes the artifact and requires repackaging and complete
-requalification. Release construction is documented in
-[docs/RELEASE.md](docs/RELEASE.md).
+The current v0.1.0 Windows package is unsigned. See the
+[release procedure](docs/RELEASE.md) for the exact release status and evidence
+boundaries.

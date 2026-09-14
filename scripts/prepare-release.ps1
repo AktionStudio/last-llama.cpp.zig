@@ -41,6 +41,18 @@ $distributionRoot = Join-Path $WorkRoot 'Extracted Distribution With Spaces'
 $qualificationRoot = Join-Path $WorkRoot 'qualification inputs'
 $checks = [Collections.Generic.List[object]]::new()
 $hiddenPaths = [Collections.Generic.List[object]]::new()
+$allowedReleaseScripts = @(
+    'scripts/build-default.json',
+    'scripts/build-engine.ps1',
+    'scripts/build-schema-api.ps1',
+    'scripts/finalize-release.ps1',
+    'scripts/generate-bindings.ps1',
+    'scripts/prepare-release.ps1',
+    'scripts/run-gate.ps1',
+    'scripts/setup-dependencies.ps1',
+    'scripts/test-cli.ps1',
+    'scripts/verify-gate.py'
+)
 
 function Get-Sha256([string]$Path) {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -205,7 +217,9 @@ New-Item -ItemType Directory -Force -Path $OutputDirectory, $rawRoot, $sanitized
 try {
     $tracked = @(& git -C $sourceRoot ls-files)
     $forbidden = @($tracked | Where-Object {
-        $_ -match '^(external|models|build|results|evidence|temp|release|\.tools|zig-out|\.zig-cache)/' -or
+        ($_.StartsWith('models/') -and $_ -ne 'models/README.md') -or
+        ($_.StartsWith('scripts/') -and $_ -notin $allowedReleaseScripts) -or
+        $_ -match '^(external|build|results|evidence|temp|release|\.tools|zig-out|\.zig-cache)/' -or
         $_ -match '(?i)\.(exe|dll|lib|exp|pdb|obj|gguf)$' -or
         $_ -match '^docs/owned-interface/(baseline/|README\.md$|REQUIREMENTS\.md$|capture-supplemental\.py$)'
     })
@@ -302,7 +316,7 @@ try {
     New-Item -ItemType Directory -Path $packageStage | Out-Null
     $runtimeCpu = Join-Path $packageStage 'runtime\cpu'
     $runtimeCuda = Join-Path $packageStage 'runtime\cuda'
-    New-Item -ItemType Directory -Path $runtimeCpu, $runtimeCuda, (Join-Path $packageStage 'LICENSES') | Out-Null
+    New-Item -ItemType Directory -Path $runtimeCpu, $runtimeCuda, (Join-Path $packageStage 'LICENSES'), (Join-Path $packageStage 'models') | Out-Null
     Copy-Item -LiteralPath (Join-Path $cpuPrefix 'bin\last-llama.exe') -Destination (Join-Path $packageStage 'last-llama.exe')
     Copy-Item -LiteralPath (Join-Path $cpuPrefix 'bin\last-llama-cpu.exe') -Destination (Join-Path $packageStage 'last-llama-cpu.exe')
     Copy-Item -LiteralPath (Join-Path $cudaPrefix 'bin\last-llama-cuda.exe') -Destination (Join-Path $packageStage 'last-llama-cuda.exe')
@@ -318,6 +332,8 @@ try {
     Copy-Item -LiteralPath (Join-Path $cloneRoot 'LICENSE'), (Join-Path $cloneRoot 'NOTICE') -Destination $packageStage
     Copy-Item -LiteralPath (Join-Path $cloneRoot 'LICENSES\llama.cpp-MIT.txt') -Destination (Join-Path $packageStage 'LICENSES\llama.cpp-MIT.txt')
     Copy-Item -LiteralPath (Join-Path $CudaToolkitRoot 'licenses\libcublas\LICENSE') -Destination (Join-Path $packageStage 'LICENSES\NVIDIA-cuBLAS-LICENSE.txt')
+    Copy-Item -LiteralPath (Join-Path $cloneRoot 'last-llama.json.example') -Destination (Join-Path $packageStage 'last-llama.json.example')
+    Copy-Item -LiteralPath (Join-Path $cloneRoot 'models\README.md') -Destination (Join-Path $packageStage 'models\README.md')
 
     @"
 # last-llama Windows x64 v0.1.0
@@ -327,7 +343,28 @@ Signing changes the payload and requires repackaging and full requalification.
 
 The archive contains the reference CLI and separate CPU/CUDA workers at its
 root. Backend DLLs remain isolated under runtime/cpu and runtime/cuda; there
-are no root-level DLLs. A configuration file and model are not bundled.
+are no root-level DLLs. A configuration example and model guide are bundled;
+model weights are not.
+
+PowerShell quick start:
+
+    Copy-Item .\last-llama.json.example .\last-llama.json
+    New-Item -ItemType Directory -Force .\models | Out-Null
+    .\last-llama.exe doctor
+    .\last-llama.exe models show qwen3-8b
+    .\last-llama.exe run qwen3-8b --backend cpu --prompt "Say hello."
+
+Command Prompt (cmd.exe) quick start:
+
+    copy last-llama.json.example last-llama.json
+    if not exist models mkdir models
+    last-llama.exe doctor
+    last-llama.exe models show qwen3-8b
+    last-llama.exe run qwen3-8b --backend cpu --prompt "Say hello."
+
+Put the separately obtained Qwen3-8B-Q4_K_M.gguf in models, or edit the model
+path in last-llama.json. For explicit CUDA, add --backend cuda --gpu-layers 37.
+PowerShell requires .\ before an executable in the current directory.
 
 Bundled origins:
 
@@ -355,6 +392,7 @@ the source repository's docs/CLI.md for configuration and commands.
         $origin = if ($relative -match '^last-llama.*\.exe$|^runtime/.*/last-llama-schema\.dll$') { 'project-built' }
                   elseif ($relative -match '^runtime/cuda/cublas(Lt)?64_13\.dll$') { 'NVIDIA redistributable' }
                   elseif ($relative -match '^runtime/') { 'llama.cpp/GGML' }
+                  elseif ($relative -eq 'last-llama.json.example') { 'configuration-example' }
                   else { 'documentation/license' }
         $license = if ($origin -eq 'NVIDIA redistributable') { 'LICENSES/NVIDIA-cuBLAS-LICENSE.txt' }
                    elseif ($origin -eq 'llama.cpp/GGML') { 'LICENSES/llama.cpp-MIT.txt' }
@@ -438,6 +476,11 @@ the source repository's docs/CLI.md for configuration and commands.
     $env:PATH = 'C:\Windows\System32;C:\Windows'
     Push-Location (Join-Path $qualificationRoot 'different working directory')
     try {
+        $exampleConfig = Join-Path $distributionRoot 'last-llama.json.example'
+        $exampleOutput = & $distCli models show qwen3-8b --config $exampleConfig 2>&1
+        if ($LASTEXITCODE -ne 0 -or (($exampleOutput -join "`n") -notmatch 'Qwen3-8B-Q4_K_M\.gguf')) { throw 'Packaged onboarding configuration did not parse and resolve the documented model.' }
+        Add-Check 'packaged onboarding configuration' 'the extracted JSON example parsed and resolved its package-relative Qwen3-8B model path from a different working directory'
+
         $doctorOutput = & $distCli doctor --config $configPath 2>&1
         if ($LASTEXITCODE -ne 0 -or (($doctorOutput -join "`n") -notmatch '(?s)PASS.*cpu') -or (($doctorOutput -join "`n") -notmatch '(?s)PASS.*cuda')) { throw 'Doctor did not pass for both extracted workers.' }
         $cpuInspect = (& $distCli inspect cpu --config $configPath --json 2>&1 | Out-String) | ConvertFrom-Json -Depth 100
