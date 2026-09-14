@@ -83,3 +83,21 @@ No file under `src/runtime`, `src/llama`, or `src/schema` changed, and
 `last-llama-jsonl-v1` did not change. The underlying CPU/CUDA runtime
 qualification remains inherited. This milestone qualifies only CLI launch,
 DLL discovery/layout, doctor diagnostics, and package-like execution.
+
+## Development-repository isolation scope
+
+For v0.1.0, runtime/package qualification and development-repository isolation
+were verified separately. These release results are distinct from the historical
+migration evidence above.
+
+CPU/CUDA package execution passed in the original release qualification
+environment. A later Windows Sandbox check confirmed that the real development
+`.git` directory was excluded from the guest filesystem. Separate complete
+archive-entry scans confirmed that neither release ZIP contains `.git` entries.
+
+Windows Application Control blocked the unsigned CPU worker from executing
+inside that Sandbox; CUDA execution there was not performed. Therefore
+simultaneous runtime execution and real development-Git isolation in the same
+execution environment remains unqualified for v0.1.0. The Sandbox check was
+isolation-only, not a full runtime qualification. See the corrected validation
+report and evidence bundle attached to the release for these separate scopes.

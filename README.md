@@ -15,6 +15,11 @@ token/piece replay have passed with no observed runtime regression. This is a
 standalone-runtime statement; downstream consumers retain their own
 execution-bound qualification records.
 
+**Release qualification note:** runtime/package qualification and
+development-repository isolation were verified as separate evidence sets.
+Combined runtime execution plus real development-Git isolation in one
+environment remains unqualified for v0.1.0.
+
 It is not llama.cpp, a model distribution, an inference server, or Ollama. It
 contains only the standalone runtime, schema bridge, and reference CLI.
 
