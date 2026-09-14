@@ -1,8 +1,15 @@
 # Last-llama.cpp.zig
 
-Run a GGUF language model locally on Windows. You can start with the command-line
-tool, then use the same CPU or CUDA runtime from your own application when you
-are ready.
+Last-llama.cpp.zig is a standalone Windows inference runtime and command-line
+tool built in Zig around `llama.cpp`. It runs user-supplied GGUF models on CPU
+or NVIDIA CUDA and gives applications a stable JSON-lines worker interface for
+local text generation, structured output, lifecycle control, and provenance.
+
+It began as a missing piece in a larger Zig project: I needed more control over
+local models than third-party model services could give me. An existing Zig
+wrapper showed that the bridge was possible; from that starting point, the
+project grew into a narrow, independently maintained runtime with an explicit
+ownership boundary. [Read the story behind the project](docs/STORY.md).
 
 Models are supplied separately, and this project never downloads one without
 you choosing it.
@@ -10,6 +17,7 @@ you choosing it.
 | I want to... | Start here |
 | --- | --- |
 | Try my first prompt | [Try it](#try-it) |
+| Learn why this project exists | [Project story](docs/STORY.md) |
 | Use the runtime from an application | [Application guide](docs/INTEGRATION.md) |
 | Compile the project myself | [Build from source](docs/BUILDING.md) |
 
@@ -102,6 +110,7 @@ evidence material lives in the dedicated references below.
 
 | Reference | What it covers |
 | --- | --- |
+| [Story](docs/STORY.md) | Why the project began and how its interface became independently maintained. |
 | [Models](models/README.md) | Model sources, configuration, memory considerations, and recorded evidence. |
 | [CLI guide](docs/CLI.md) | Commands, settings, package layout, and troubleshooting. |
 | [Runtime reference](docs/RUNTIME_BOUNDARY.md) | Worker protocol, lifecycle, constraints, and attestation. |
