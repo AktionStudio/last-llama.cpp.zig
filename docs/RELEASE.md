@@ -4,10 +4,11 @@ The v0.1.0 Windows distribution is intentionally **unsigned**. Signing or
 otherwise changing any packaged file requires a new package and complete
 requalification.
 
-The existing tag and v0.1.0 archives are immutable historical deliverables.
-The tracked `last-llama.json.example`, `models/README.md`, and package-onboarding
-changes describe the next release and are not present in, or qualified as part
-of, those existing archives.
+The existing tag and originally qualified v0.1.0 archive remain historical
+deliverables. The packaging-only v0.1.0 Windows update reuses every executable
+and DLL byte-for-byte while adding `last-llama.json.example`,
+`models/README.md`, and refreshed package documentation. This is package
+inventory verification, not a new runtime qualification.
 
 These are release-maintainer operations, not installation steps for application
 users. The complete tracked-script classification is in
@@ -69,10 +70,10 @@ The prepare phase writes three immutable candidates and
 - `last-llama-v0.1.0-source.zip`
 - `last-llama-v0.1.0-evidence.zip`
 
-For the next release, package staging also includes
-`last-llama.json.example` and `models/README.md`. Actual GGUF weights remain
-forbidden. The package manifest records both onboarding files, and extracted
-qualification parses the packaged example before inference. Executables remain
+The packaging-only v0.1.0 Windows update includes `last-llama.json.example`
+and `models/README.md`. Actual GGUF weights remain forbidden. The package
+manifest records both onboarding files, and package verification parses the
+packaged example. Executables remain
 at the archive root, DLLs remain exclusively under their backend runtime
 directories, and the distribution remains CPU plus CUDA rather than GPU-only.
 

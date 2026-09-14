@@ -27,4 +27,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 /temp/
-/release/
+# Large binary archives are uploaded as GitHub Release assets, not Git blobs.
+/release/*/github-release-assets/

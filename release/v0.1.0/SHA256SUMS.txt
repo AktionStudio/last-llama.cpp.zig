@@ -1,0 +1,6 @@
+6edb81c9b596269a856940dba0113e46ff4179d4297ca97595d2408ae12ef292  last-llama-windows-x64-v0.1.0.zip
+81f4dc68a11cf1f93be5eee0b6dae111002927855118889e443e3dacb770acaa  last-llama-v0.1.0-source.zip
+ee8721b64e2848b059fa9d044641c09fc3a9dc08b54dee237c4f2282dbd72201  last-llama-v0.1.0-evidence.zip
+70eee6616d3968ceb9b2867c8518a144594d8699dc42f18b564f9acfc6c1241e  v0.1.0-validation-report.md
+9605cd81a21cde2da6e4786e279c78ffb521c4dade346f2e41c96d1f9a22bcdf  PACKAGING-UPDATE.md
+2058f1e40b97f6477a39cb508dbc1d2d27895fe1280d3a936c7991ce0bdf4c26  qualification-summary.json

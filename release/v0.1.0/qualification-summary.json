@@ -1,0 +1,136 @@
+{
+  "format": "last-llama-v0.1.0-qualification-v1",
+  "version": "v0.1.0",
+  "unsigned": true,
+  "overall_status": "PARTIAL",
+  "release_commit": "4e4824a01c0fa59b40e8e18073c270f28aa5bedd",
+  "llama_cpp_revision": "d4abd573f6a360201799072384ceec6170fdb60c",
+  "checks": [
+    {
+      "name": "source hygiene",
+      "status": "PASS",
+      "details": "54 explicitly curated tracked files; no forbidden source or public-documentation references"
+    },
+    {
+      "name": "documentation validation",
+      "status": "PASS",
+      "details": "all public Markdown relative links and forbidden-reference scans passed"
+    },
+    {
+      "name": "clean-clone/source tests",
+      "status": "PASS",
+      "details": "clean clone at exact release commit passed dependency-free runtime and CLI tests"
+    },
+    {
+      "name": "CPU clean build",
+      "status": "PASS",
+      "details": "fresh Ninja 1.13.2 build at 16 jobs passed"
+    },
+    {
+      "name": "CUDA clean build",
+      "status": "PASS",
+      "details": "fresh Ninja 1.13.2 build at 16 jobs passed"
+    },
+    {
+      "name": "source ZIP verification",
+      "status": "PASS",
+      "details": "complete archive inventory and every file blob match the release commit"
+    },
+    {
+      "name": "package manifest verification",
+      "status": "PASS",
+      "details": "extracted inventory, byte sizes, and SHA-256 hashes exactly match the payload manifest"
+    },
+    {
+      "name": "development-path isolation",
+      "status": "UNQUALIFIED",
+      "details": "Real development Git exclusion during original runtime execution was not proved. Separate Windows Sandbox probes proved guest exclusion only; unsigned worker execution was blocked by Application Control."
+    },
+    {
+      "name": "extracted-package CPU inference",
+      "status": "PASS",
+      "details": "PASS from a different working directory with external relative model configuration"
+    },
+    {
+      "name": "extracted-package CUDA inference",
+      "status": "PASS",
+      "details": "PASS with explicit one-layer offload"
+    },
+    {
+      "name": "offload/cross-load isolation",
+      "status": "PASS",
+      "details": "CPU and CUDA module origins stayed inside their selected package directories; CUDA offload was requested and effective"
+    },
+    {
+      "name": "configuration portability",
+      "status": "PASS",
+      "details": "relative model path resolved from an external config while execution used a different current directory"
+    },
+    {
+      "name": "structured output and lifecycle",
+      "status": "PASS",
+      "details": "extracted CPU schema output and three-cycle lifecycle gate passed"
+    },
+    {
+      "name": "runtime revision binding",
+      "status": "PASS",
+      "details": "both workers embed the full release commit; matching pin passed and mismatched pin failed closed"
+    },
+    {
+      "name": "missing-dependency diagnostics",
+      "status": "PASS",
+      "details": "doctor rejected a missing required CPU dependency and named it"
+    },
+    {
+      "name": "explicit-CUDA no fallback",
+      "status": "PASS",
+      "details": "explicit CUDA failed without selecting CPU when the CUDA worker was unavailable"
+    },
+    {
+      "name": "read-only execution",
+      "status": "PASS",
+      "details": "write denial was enforced, CPU inference passed, and every captured ACL was restored exactly"
+    },
+    {
+      "name": "evidence sanitation",
+      "status": "PASS",
+      "details": "fresh sanitized summaries omit raw logs and normalize repository, dependency, model, and work paths"
+    },
+    {
+      "name": "final readiness",
+      "status": "QUALIFIED WITH LIMITATION",
+      "details": "Publication supported only under disclosed separate-evidence claims. The stronger same-environment requirement in docs/RELEASE.md:51-54 remains unqualified. No blanket all-PASS claim."
+    },
+    {
+      "name": "corrected Sandbox Git exclusion (isolation-only)",
+      "status": "PASS",
+      "details": "HEAD/config read and refs enumeration failed against the real host development path inside Windows Sandbox; ZIP hash and extraction passed. No runtime execution qualification in this guest."
+    }
+  ],
+  "artifacts": {
+    "source": {
+      "name": "last-llama-v0.1.0-source.zip",
+      "sha256": "81f4dc68a11cf1f93be5eee0b6dae111002927855118889e443e3dacb770acaa",
+      "bytes": 98248
+    },
+    "binary": {
+      "name": "last-llama-windows-x64-v0.1.0.zip",
+      "sha256": "f6e437c45cf0fac09784239e742fbe3db02d689e50c45411fb9210da451a441b",
+      "bytes": 442154538
+    },
+    "evidence": {
+      "name": "last-llama-v0.1.0-evidence.zip",
+      "sha256": "ee8721b64e2848b059fa9d044641c09fc3a9dc08b54dee237c4f2282dbd72201",
+      "bytes": 13682
+    }
+  },
+  "correction": {
+    "model": "Separate evidence",
+    "original_runtime_evidence": "Preserved byte-for-byte",
+    "same_boundary_runtime_and_git_isolation": "UNQUALIFIED",
+    "publication_readiness": "CLEARED FOR NARROWER DISCLOSED CLAIMS ONLY",
+    "stronger_claim_reference": "docs/RELEASE.md:51-54",
+    "tag_changed": false,
+    "rebuilt": false
+  }
+}

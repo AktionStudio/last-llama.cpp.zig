@@ -22,10 +22,24 @@ verify the upstream page before downloading or redistributing a model.
 
 ## Configure a model
 
-The existing v0.1.0 archive has no configuration example. Save the [source example](../last-llama.json.example) as `last-llama.json` beside the executable. If your package includes `last-llama.json.example`, copy it to `last-llama.json`. Its alias `qwen3-8b` maps
-to `models\Qwen3-8B-Q4_K_M.gguf`. Relative paths resolve from the directory
+The updated v0.1.0 Windows package includes this guide in `models\README.md`
+and includes `last-llama.json.example` beside the executables. Copy that file
+to `last-llama.json`, then edit the model path as needed. Its alias `qwen3-8b`
+maps to `models\Qwen3-8B-Q4_K_M.gguf`. Relative paths resolve from the directory
 containing the selected configuration file, not necessarily the current
 working directory. You can also pass an absolute GGUF path instead of an alias.
+
+```powershell
+Copy-Item .\last-llama.json.example .\last-llama.json
+notepad .\last-llama.json
+```
+
+```bat
+copy last-llama.json.example last-llama.json
+notepad last-llama.json
+```
+
+The first block is for PowerShell; the second is for Command Prompt.
 
 The sample leaves backend selection at `auto` without configuring GPU layers,
 so it remains CPU-capable. CUDA is always an explicit choice:

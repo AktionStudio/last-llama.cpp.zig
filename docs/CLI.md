@@ -66,8 +66,10 @@ All relative model, worker, and worker-library paths are resolved relative to
 the configuration file. The parser is strict: unknown or duplicate fields,
 wrong types, invalid enum values, and invalid numeric ranges are errors.
 
-The current source includes [`last-llama.json.example`](../last-llama.json.example) for the next package. The existing v0.1.0 archive does not include it; save the source example beside the executable yourself, or run with an absolute model path.
-Copy it beside `last-llama.exe` as `last-llama.json`, place the named GGUF in
+The updated v0.1.0 Windows package includes
+[`last-llama.json.example`](../last-llama.json.example) beside the executables
+and includes the model guide at `models\README.md`. Copy the example as
+`last-llama.json`, place the named GGUF in
 `models\`, and edit the filename or settings as needed. The tracked copy at
 [`examples/last-llama.example.json`](../examples/last-llama.example.json) is
 kept byte-identical for readers who browse examples first. JSON comments are
@@ -114,7 +116,9 @@ it selects an available CPU worker. Explicit CUDA never falls back to CPU.
 
 ## Package layout
 
-The layout below includes next-package onboarding files (`last-llama.json.example` and `models/README.md`), absent from the existing v0.1.0 archive. A live `last-llama.json` is user-created.
+The updated v0.1.0 Windows package uses the layout below. It includes
+`last-llama.json.example` and `models/README.md`; a live `last-llama.json` and
+GGUF model files are user-created.
 
 CPU and CUDA builds have backend-specific DLLs with overlapping filenames, so
 their qualified module sets must not be flattened together:

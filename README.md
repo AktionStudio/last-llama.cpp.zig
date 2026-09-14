@@ -50,8 +50,8 @@ Once your first prompt works, you can give models friendly names such as
 `qwen3-8b`. Save the [configuration example](last-llama.json.example) beside
 `last-llama.exe` as `last-llama.json`, then edit the model path.
 
-The current v0.1.0 ZIP does not include this example file, but the direct model
-path shown above works without it.
+The updated v0.1.0 Windows ZIP includes `last-llama.json.example` and a
+`models\README.md` guide. Actual GGUF model files are still supplied separately.
 
 ```powershell
 Copy-Item .\last-llama.json.example .\last-llama.json
